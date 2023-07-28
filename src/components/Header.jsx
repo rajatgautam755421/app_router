@@ -49,6 +49,7 @@ const Header = () => {
               placeholder="Search By Category..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyUp={(e) => e.key === "Enter" && handleSearch()}
             />
 
             <Button size="sm" className="p-1 me-3 ms-1" onClick={handleSearch}>

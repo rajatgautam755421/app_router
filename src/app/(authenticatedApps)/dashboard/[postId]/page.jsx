@@ -1,27 +1,54 @@
+import { makeApiRequest } from "@/helpers/apiHelper";
+import { POST_FIELDS } from "@/helpers/constant";
 import { notFound } from "next/navigation";
 import PostInfo from "./PostInfo";
 
-export const generateStaticParams = async () => {
-  const res = await fetch("https://fakestoreapi.com/products", {
-    next: { revalidate: 10 },
+async function updatePost(post, id) {
+  "use server";
+
+  const postData = {};
+
+  POST_FIELDS.forEach(({ key }) => {
+    postData[key] = post?.get(key)?.valueOf();
   });
 
-  const data = await res.json();
+  const { data, error } = await makeApiRequest({
+    endPoint: `api/post`,
+    requestBody: {
+      ...postData,
+      id,
+      requestType: "findUnique",
+    },
+    method: "PUT",
+    cache: "no-store",
+  });
 
-  return data.filter((d) => d?.id < 5).map((d) => ({ postId: String(d.id) }));
-};
+  if (error) {
+    throw new Error(error);
+  }
+
+  return data;
+}
 
 const Page = async ({ params }) => {
-  const res = await fetch(
-    `https://fakestoreapi.com/products/${params?.postId}`,
-    { cache: "force-cache" }
-  );
+  const { data, error } = await makeApiRequest({
+    endPoint: "/api/post",
+    requestBody: {
+      id: params.postId,
+    },
+    method: "POST",
+    cache: "no-store",
+  });
 
-  const data = await res.json();
+  if (error) {
+    throw new Error(error);
+  }
+
+  if (!data) return notFound();
 
   return (
     <div>
-      <PostInfo data={data} />
+      <PostInfo data={data} updatePost={updatePost} />
     </div>
   );
 };

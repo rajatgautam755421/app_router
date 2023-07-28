@@ -8,19 +8,6 @@ const AddEditPost = ({ show, onSave, onClose, children, title = "" }) => {
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Close
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => {
-            onSave();
-          }}
-        >
-          Save Changes
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };

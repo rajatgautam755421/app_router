@@ -3,12 +3,18 @@
 import AddEditPost from "@/components/AddEditPost";
 import CardCommom from "@/components/Card";
 import { POST_FIELDS } from "@/helpers/constant";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
-const PostInfo = ({ data }) => {
-  const [item, setItem] = useState(data);
+const PostInfo = ({ data, updatePost }) => {
   const [itemMetaData, setItemMetaData] = useState(null);
+  const router = useRouter();
+
+  const onUpdate = () => {
+    setItemMetaData(null);
+    router.refresh();
+  };
 
   return (
     <>
@@ -18,31 +24,33 @@ const PostInfo = ({ data }) => {
           onClose={() => setItemMetaData(null)}
           title="Edit Post"
         >
-          {POST_FIELDS.map(({ key, label }) => {
-            return (
-              <Form.Group className="mb-3" key={key}>
-                <Form.Label>{label}</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={itemMetaData[key]}
-                  onChange={(e) =>
-                    setItemMetaData({
-                      ...itemMetaData,
-                      [key]: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-            );
-          })}
+          <Form
+            action={async (e) => {
+              onUpdate(await updatePost(e, data?.id));
+            }}
+          >
+            {POST_FIELDS.map(({ key, label }) => {
+              return (
+                <Form.Group className="mb-3" key={key}>
+                  <Form.Label>{label}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name={key}
+                    defaultValue={data[key]}
+                  />
+                </Form.Group>
+              );
+            })}
+            <Button type="submit">Update</Button>
+          </Form>
         </AddEditPost>
       )}
       <CardCommom
-        title={item.title}
-        description={item.description}
-        image={item.image}
+        title={data.title}
+        description={data.description}
+        image={data.image}
         buttonText={"Edit"}
-        onClick={() => setItemMetaData(item)}
+        onClick={() => setItemMetaData({})}
       />
     </>
   );

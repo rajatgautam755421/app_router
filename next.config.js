@@ -1,4 +1,8 @@
 const nextConfig = {
+  productionBrowserSourceMaps: false,
+  experimental: {
+    serverActions: true,
+  },
   images: {
     remotePatterns: [
       {

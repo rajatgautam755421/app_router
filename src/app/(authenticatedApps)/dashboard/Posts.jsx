@@ -1,32 +1,20 @@
 "use client";
 
 import CardCommom from "@/components/Card";
-import React, { useEffect, useReducer, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import AddEditPost from "../../../components/AddEditPost";
 import { POST_FIELDS } from "@/helpers/constant";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import AddEditPost from "../../../components/AddEditPost";
 
-const Posts = ({ data }) => {
-  const [items, setItems] = useState([]);
+const Posts = ({ data, createPost }) => {
   const [addEditPostMetadata, setAddEditPostMetadata] = useState(null);
   const router = useRouter();
 
   const onPostAddition = () => {
-    setItems([
-      {
-        ...addEditPostMetadata,
-        id: Date.now().toString(),
-        image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-      },
-      ...items,
-    ]);
     setAddEditPostMetadata(null);
+    router.refresh();
   };
-
-  useEffect(() => {
-    setItems([...data]);
-  }, [data]);
 
   return (
     <Container fluid>
@@ -34,31 +22,38 @@ const Posts = ({ data }) => {
         title="Add Post"
         show={addEditPostMetadata}
         onClose={() => setAddEditPostMetadata(null)}
-        onSave={onPostAddition}
+        onSave={() => {}}
       >
-        {POST_FIELDS.map(({ key, label }) => {
-          return (
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlInput1"
-              key={key}
-              value={addEditPostMetadata?.[key]}
-              onChange={(e) =>
-                setAddEditPostMetadata({
-                  ...addEditPostMetadata,
-                  [key]: e.target.value,
-                })
-              }
-            >
-              <Form.Label>{label}</Form.Label>
-              <Form.Control type="email" />
-            </Form.Group>
-          );
-        })}
+        <Form
+          action={async (e) => {
+            onPostAddition(await createPost(e));
+          }}
+        >
+          {POST_FIELDS.map(({ key, label }) => {
+            return (
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlInput1"
+                key={key}
+                value={addEditPostMetadata?.[key]}
+                onChange={(e) =>
+                  setAddEditPostMetadata({
+                    ...addEditPostMetadata,
+                    [key]: e.target.value,
+                  })
+                }
+              >
+                <Form.Label>{label}</Form.Label>
+                <Form.Control type="text" name={key} />
+              </Form.Group>
+            );
+          })}
+          <Button type="submit">Submit</Button>
+        </Form>
       </AddEditPost>
       <Row>
-        {items.length &&
-          items.map((item) => {
+        {data.length &&
+          data.map((item) => {
             return (
               <Col md={4} className="my-2" key={item.id}>
                 <CardCommom

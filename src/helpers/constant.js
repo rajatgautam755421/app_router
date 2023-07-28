@@ -8,3 +8,5 @@ export const POST_FIELDS = [
     label: "Description",
   },
 ];
+
+export const API_URL = "http://localhost:3000/";

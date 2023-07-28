@@ -1,30 +1,68 @@
+import { makeApiRequest } from "@/helpers/apiHelper";
+import { POST_FIELDS } from "@/helpers/constant";
 import Link from "next/link";
 import Posts from "./Posts";
 
-export default async function Home({ searchParams }) {
-  const res = await fetch(
-    !searchParams.search
-      ? "https://fakestoreapi.com/products"
-      : `https://fakestoreapi.com/products/category/${searchParams.search}`,
-    { next: { revalidate: 10 } }
-  );
+async function createPost(post) {
+  "use server";
 
-  const data = await res.json();
+  const postData = {};
+
+  POST_FIELDS.forEach(({ key }) => {
+    postData[key] = post?.get(key)?.valueOf();
+  });
+
+  const { data, error } = await makeApiRequest({
+    endPoint: "/api/post",
+    requestBody: {
+      ...postData,
+      image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    },
+    method: "POST",
+    cache: "no-cache",
+  });
+
+  if (error) {
+    throw new Error(error);
+  }
+
+  return data;
+}
+
+export default async function Home({ searchParams }) {
+  let serachQuery = searchParams?.search;
+
+  const { data, error } = await makeApiRequest({
+    endPoint: "api/post",
+    cache: "no-cache",
+    method: serachQuery ? "POST" : "GET",
+    requestBody: serachQuery
+      ? { requestType: "search", searchQuery: serachQuery }
+      : undefined,
+  });
+
+  if (error) {
+    throw new Error(error);
+  }
 
   return (
     <>
       {data?.length !== 0 ? (
-        <Posts data={data} />
+        <Posts data={data} createPost={createPost} />
       ) : (
         <>
-          <div className="d-flex flex-column">
-            <h6 className="text-center my-2">
-              No Post Found with query &lsquo;{searchParams?.search}&rsquo;
-            </h6>
-            <Link href={"/dashboard"} className="text-center">
-              Visit Home
-            </Link>
-          </div>
+          {serachQuery ? (
+            <div className="d-flex flex-column">
+              <h6 className="text-center my-2">
+                No Post Found with query &lsquo;{searchParams?.search}&rsquo;
+              </h6>
+              <Link href={"/dashboard"} className="text-center">
+                Visit Home
+              </Link>
+            </div>
+          ) : (
+            <h6 className="text-center my-2">No Posts Found</h6>
+          )}
         </>
       )}
     </>
