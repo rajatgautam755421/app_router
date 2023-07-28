@@ -17,7 +17,6 @@ async function updatePost(post, id) {
     requestBody: {
       ...postData,
       id,
-      requestType: "findUnique",
     },
     method: "PUT",
     cache: "no-store",
@@ -35,6 +34,7 @@ const Page = async ({ params }) => {
     endPoint: "/api/post",
     requestBody: {
       id: params.postId,
+      requestType: "findUnique",
     },
     method: "POST",
     cache: "no-store",
