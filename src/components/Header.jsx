@@ -13,12 +13,8 @@ const Header = () => {
 
   const handleSearch = () => {
     if (query) {
-      // window.location.replace(`/dashboard?search=${query}`);
-
       router.push(`/dashboard?search=${query}`);
     } else {
-      // window.location.replace(`/dashboard`);
-
       router.push(`/dashboard`);
     }
   };

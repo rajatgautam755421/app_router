@@ -1,6 +1,6 @@
-export const setUserCookie = (token) => {
-  if (token) {
-    let cookie = `user=${token};`;
+export const setUserCookie = (user) => {
+  if (user) {
+    let cookie = `user=${JSON.stringify(user)};`;
     cookie += "path=/;";
     cookie += `max-age=${60 * 60 * 24 * 365};`;
 
@@ -11,12 +11,14 @@ export const setUserCookie = (token) => {
 };
 
 export function getCookieValueInClient(cookieName) {
-  const cookies = document.cookie.split("; ");
-  for (const cookie of cookies) {
-    const [name, value] = cookie.split("=");
-    if (name === cookieName) {
-      return decodeURIComponent(value);
+  const cookies = document.cookie.split(";");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(cookieName + "=")) {
+      return cookie.substring(cookieName.length + 1);
     }
   }
+
   return null;
 }

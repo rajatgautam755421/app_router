@@ -1,6 +1,7 @@
 "use client";
 
-import { getCookieValueInClient, setUserCookie } from "@/helpers/general";
+import { setUserCookie } from "@/helpers/general";
+import Cookies from "universal-cookie";
 import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
@@ -8,9 +9,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (token) => {
-    setUser({ token });
-    setUserCookie("sdjkfhjhsdgfhjsdgh");
+  const login = (response) => {
+    setUser({ ...response });
   };
 
   const logout = () => {
@@ -19,10 +19,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const storedUser = getCookieValueInClient("user");
+    const cookies = new Cookies();
+    const userCookieValue = cookies.get("user");
 
-    if (storedUser) {
-      setUser({ token: storedUser });
+    if (userCookieValue) {
+      setUser(userCookieValue);
     }
   }, []);
 

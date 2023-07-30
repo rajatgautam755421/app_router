@@ -1,67 +1,38 @@
-"use client";
+import { makeApiRequest } from "@/helpers/apiHelper";
+import Login from "./Login";
 
-import { AuthContext } from "@/context/AuthContext";
-import { useContext, useState } from "react";
-import { Alert, Button, Form } from "react-bootstrap";
-import { useRouter } from "next/navigation";
-import { setUserCookie } from "@/helpers/general";
+async function handleLoginClick(userValues) {
+  "use server";
 
-const Page = () => {
-  const [formValues, setFormValues] = useState({});
-  const [error, setError] = useState(null);
-  const { user, login } = useContext(AuthContext);
-  const router = useRouter();
+  const postData = {};
 
-  if (user) {
-    router.push("/dashboard");
-    return;
+  postData["email"] = userValues?.get("email")?.valueOf();
+  postData["password"] = userValues?.get("password")?.valueOf();
+
+  if (!postData.email || !postData?.password) {
+    return { error: "Fields Cannot Be Empty" };
   }
 
-  const handleLoginClick = () => {
-    if (!formValues?.email || !formValues?.password) {
-      setError("Fields Cannot Be Empty");
-    } else if (
-      formValues.email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-      formValues.password !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD
-    ) {
-      setError("Either Email or password is Incorrect");
-    } else {
-      login("kjsdgfhdgfhgdshjghjdsghj");
-      router.push("/dashboard");
-    }
-  };
+  const { data, error } = await makeApiRequest({
+    endPoint: "api/user",
+    method: "POST",
+    requestBody: {
+      requestType: "login",
+      ...postData,
+    },
+  });
 
+  if (error) {
+    return { error };
+  }
+
+  return { data };
+}
+
+const Page = () => {
   return (
     <>
-      {error && (
-        <Alert key={"danger"} variant={"danger"}>
-          {error}
-        </Alert>
-      )}
-      <h6 className="my-2 text-center">Login To Continue To Dashboard</h6>
-      <Form className="w-50 mx-auto my-4">
-        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            type="email"
-            value={formValues?.email}
-            onChange={(e) =>
-              setFormValues({ ...formValues, email: e.target.value })
-            }
-          />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            value={formValues?.password}
-            onChange={(e) =>
-              setFormValues({ ...formValues, password: e.target.value })
-            }
-          />
-        </Form.Group>
-        <Button onClick={handleLoginClick}>Login</Button>
-      </Form>
+      <Login handleLoginClick={handleLoginClick} />
     </>
   );
 };

@@ -8,15 +8,20 @@ export const makeApiRequest = async ({
   requestBody,
 }) => {
   const nextCookie = cookies();
+  let user;
 
-  const user = nextCookie.get("user")?.value;
+  const userCookie = nextCookie.get("user")?.value;
+
+  if (userCookie) {
+    user = JSON.parse(userCookie)?.data;
+  }
 
   const res = await fetch(API_URL + endPoint, {
     method,
     cache,
     body: JSON.stringify(requestBody),
     next: !cache ? { revalidate: 5 } : {},
-    headers: { token: user },
+    headers: { token: user?.token },
   });
 
   const { data, error } = await res.json();
@@ -25,7 +30,7 @@ export const makeApiRequest = async ({
     return { error };
   }
 
-  if (data.error) {
+  if (data?.error) {
     return { error: data.error };
   }
 

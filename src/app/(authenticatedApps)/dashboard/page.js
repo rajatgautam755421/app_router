@@ -29,22 +29,27 @@ async function createPost(post) {
   return data;
 }
 
-export default async function Home({ searchParams }) {
-  let serachQuery = searchParams?.search;
-
+async function fetchPosts(searchQuery) {
   const { data, error } = await makeApiRequest({
     endPoint: "api/post",
     cache: "no-cache",
-    method: serachQuery ? "POST" : "GET",
-    requestBody: serachQuery
-      ? { requestType: "search", searchQuery: serachQuery }
+    method: searchQuery ? "POST" : "GET",
+    requestBody: searchQuery
+      ? { requestType: "search", searchQuery: searchQuery }
       : undefined,
   });
+
+  return { data, error };
+}
+
+export default async function Home({ searchParams }) {
+  let searchQuery = searchParams?.search;
+
+  const { data, error } = await fetchPosts(searchQuery);
 
   if (error) {
     throw new Error(error);
   }
-
   return (
     <>
       {data?.length !== 0 ? (
