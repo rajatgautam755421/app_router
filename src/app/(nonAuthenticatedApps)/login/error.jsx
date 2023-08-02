@@ -8,7 +8,7 @@ const error = ({ error, reset }) => {
       <Alert key={"danger"} variant={"danger"}>
         {error.message}
       </Alert>
-      <Button onClick={reset}>Refresh</Button>
+      <Button onClick={reset}>Refresh This One</Button>
     </div>
   );
 };

@@ -1,5 +1,4 @@
-import React from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 const AddEditPost = ({ show, onSave, onClose, children, title = "" }) => {
   return (

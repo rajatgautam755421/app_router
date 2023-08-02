@@ -29,13 +29,41 @@ const Header = () => {
       <Navbar.Toggle />
       <Navbar.Collapse>
         <div className="d-flex justify-content-between align-items-between w-100">
-          <Link
-            href="/dashboard"
-            className="mx-3"
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            Home
-          </Link>
+          <div className="d-flex justify-content-between align-items-center">
+            <h6
+              onClick={() => router.push("/dashboard")}
+              className="mx-3"
+              style={{
+                textDecoration: "none",
+                color: "black",
+                cursor: "pointer",
+              }}
+            >
+              Home
+            </h6>
+            <h6
+              onClick={() => router.push("/about")}
+              className="mx-3"
+              style={{
+                textDecoration: "none",
+                color: "black",
+                cursor: "pointer",
+              }}
+            >
+              About
+            </h6>
+            <h6
+              onClick={() => router.push("/gallery")}
+              className="mx-3"
+              style={{
+                textDecoration: "none",
+                color: "black",
+                cursor: "pointer",
+              }}
+            >
+              Gallery
+            </h6>
+          </div>
 
           <div className="d-flex justify-content-between">
             <input

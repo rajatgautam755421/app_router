@@ -1,7 +1,7 @@
-import { updatePost } from "@/actions/serverActions";
 import { makeApiRequest } from "@/helpers/apiHelper";
 import { notFound } from "next/navigation";
 import PostInfo from "./PostInfo";
+import { updatePost } from "@/actions/serverActions";
 
 const Page = async ({ params }) => {
   const { data, error } = await makeApiRequest({

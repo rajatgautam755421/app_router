@@ -3,17 +3,16 @@
 import AddEditPost from "@/components/AddEditPost";
 import CardCommom from "@/components/Card";
 import { POST_FIELDS } from "@/helpers/constant";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button, Form } from "react-bootstrap";
 
 const PostInfo = ({ data, updatePost }) => {
   const [itemMetaData, setItemMetaData] = useState(null);
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const onUpdate = () => {
+  const onUpdate = async (e) => {
     setItemMetaData(null);
-    router.refresh();
+    await updatePost(e, data?.id);
   };
 
   return (
@@ -25,8 +24,8 @@ const PostInfo = ({ data, updatePost }) => {
           title="Edit Post"
         >
           <Form
-            action={async (e) => {
-              onUpdate(await updatePost(e, data?.id));
+            action={(e) => {
+              startTransition(async () => await onUpdate(e));
             }}
           >
             {POST_FIELDS.map(({ key, label }) => {
@@ -41,7 +40,9 @@ const PostInfo = ({ data, updatePost }) => {
                 </Form.Group>
               );
             })}
-            <Button type="submit">Update</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Updating..." : "Update"}
+            </Button>
           </Form>
         </AddEditPost>
       )}

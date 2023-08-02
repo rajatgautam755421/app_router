@@ -7,6 +7,9 @@ function CardCommom({
   onClick,
   buttonText,
   image,
+  onDelete,
+  id,
+  isLoading,
 }) {
   return (
     <Card style={{ width: "18rem" }} className="mx-auto">
@@ -26,6 +29,20 @@ function CardCommom({
           >
             {buttonText}
           </Button>
+
+          {onDelete && (
+            <Button
+              className="mx-auto"
+              variant="danger"
+              disabled={isLoading}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(id);
+              }}
+            >
+              {isLoading ? "Deleting..." : "Delete"}
+            </Button>
+          )}
         </div>
       </Card.Body>
     </Card>

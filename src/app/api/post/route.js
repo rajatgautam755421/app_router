@@ -82,3 +82,19 @@ export async function PUT(request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const reqBody = await request.json();
+
+    const deletedPost = await prisma.post.delete({
+      where: {
+        id: reqBody.id,
+      },
+    });
+
+    return NextResponse.json({ data: deletedPost }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
