@@ -6,7 +6,7 @@ import Posts from "./Posts";
 async function fetchPosts(searchQuery) {
   const { data, error } = await makeApiRequest({
     endPoint: "api/post",
-    cache: "force-cache",
+    cache: "no-store",
     method: searchQuery ? "POST" : "GET",
     next: {
       tags: ["post"],

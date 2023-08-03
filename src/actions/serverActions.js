@@ -21,13 +21,9 @@ export async function createPost(post) {
     cache: "force-cache",
   });
 
-  if (error) {
-    throw new Error(error);
-  }
+  // revalidateTag("post");
 
-  revalidateTag("post");
-
-  return data;
+  return { data, error };
 }
 
 export async function deletePost(id) {
@@ -39,7 +35,7 @@ export async function deletePost(id) {
     method: "DELETE",
   });
 
-  revalidateTag("post");
+  // revalidateTag("post");
 
   return { data, error };
 }
@@ -61,13 +57,9 @@ export async function updatePost(post, id) {
     cache: "force-cache",
   });
 
-  if (error) {
-    throw new Error(error);
-  }
+  // revalidateTag("post");
 
-  revalidateTag("post");
-
-  return data;
+  return { data, error };
 }
 
 export async function handleLoginClick(userValues) {
@@ -91,9 +83,5 @@ export async function handleLoginClick(userValues) {
     },
   });
 
-  if (error) {
-    return { error };
-  }
-
-  return { data };
+  return { data, error };
 }

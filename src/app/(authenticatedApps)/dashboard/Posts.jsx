@@ -1,22 +1,21 @@
 "use client";
 
+import { deletePost } from "@/actions/serverActions";
 import CardCommom from "@/components/Card";
 import { POST_FIELDS } from "@/helpers/constant";
 import { useRouter } from "next/navigation";
 import { experimental_useOptimistic, useState, useTransition } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import AddEditPost from "../../../components/AddEditPost";
 import { toast } from "react-hot-toast";
-import { deletePost } from "@/actions/serverActions";
-import { makeApiRequest } from "@/helpers/apiHelper";
-import { revalidateTag } from "next/cache";
+import AddEditPost from "../../../components/AddEditPost";
 
 const Posts = ({ data, createPost }) => {
   const [optimisticPosts, addOptimisticPosts] = experimental_useOptimistic(
     data,
     (state, newData) => [{ ...newData }, ...state]
   );
-  const [isLoading, startTransition] = useTransition();
+  const [isLoading, startAddTransition] = useTransition();
+  const [isLoadingDeletion, startDeleteTransition] = useTransition();
 
   const [addEditPostMetadata, setAddEditPostMetadata] = useState(null);
   const router = useRouter();
@@ -30,19 +29,27 @@ const Posts = ({ data, createPost }) => {
     });
     addOptimisticPosts(postData);
 
-    const { error } = await createPost(post);
+    startAddTransition(async () => {
+      const { data, error } = await createPost(post);
+      if (error) {
+        return toast.error(error);
+      }
+      toast.success("Successfully Added");
 
-    if (error) {
-      return toast.error(error);
-    }
+      router.refresh();
+    });
   };
 
   const onPostDelete = async (id) => {
-    startTransition(async () => {
+    startDeleteTransition(async () => {
       const { data, error } = await deletePost(id);
       if (error) {
         return toast.error(error);
       }
+
+      toast.success("Successfully Deleted");
+
+      router.refresh();
     });
   };
 
@@ -55,8 +62,8 @@ const Posts = ({ data, createPost }) => {
         onSave={() => {}}
       >
         <Form
-          action={(e) => {
-            startTransition(async () => await onPostAddition(e));
+          action={async (e) => {
+            await onPostAddition(e);
           }}
         >
           {POST_FIELDS.map(({ key, label }) => {
@@ -96,7 +103,7 @@ const Posts = ({ data, createPost }) => {
                   buttonText={"VIEW"}
                   onClick={() => router.push(`/dashboard/${item.id}`)}
                   onDelete={onPostDelete}
-                  isLoading={isLoading}
+                  isLoading={isLoadingDeletion}
                 />
               </Col>
             );

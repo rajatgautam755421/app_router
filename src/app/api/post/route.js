@@ -87,6 +87,14 @@ export async function DELETE(request) {
   try {
     const reqBody = await request.json();
 
+    const postExixts = await prisma.post.findUnique({
+      where: { id: reqBody.id },
+    });
+
+    if (!postExixts) {
+      throw new Error("Post With This Id Doesn't Exist.");
+    }
+
     const deletedPost = await prisma.post.delete({
       where: {
         id: reqBody.id,

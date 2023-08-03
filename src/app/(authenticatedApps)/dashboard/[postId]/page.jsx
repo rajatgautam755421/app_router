@@ -11,7 +11,7 @@ const Page = async ({ params }) => {
       requestType: "findUnique",
     },
     method: "POST",
-    cache: "force-cache",
+    cache: "no-store",
     next: {
       tags: ["post"],
     },
