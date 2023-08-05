@@ -11,7 +11,6 @@ import { toast } from "react-hot-toast";
 const PostInfo = ({ data, updatePost }) => {
   const [itemMetaData, setItemMetaData] = useState(null);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   const onUpdate = async (e) => {
     setItemMetaData(null);

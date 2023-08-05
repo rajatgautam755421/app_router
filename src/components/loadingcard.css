@@ -1,0 +1,38 @@
+/* LoadingSkeletonCard.css */
+
+.loading-skeleton-card {
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.loading-skeleton-image {
+  width: 100%;
+  height: 200px;
+  background-color: #e8e8e8;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.loading-skeleton-details {
+  padding: 10px;
+}
+
+.loading-skeleton-title {
+  width: 60%;
+  height: 16px;
+  background-color: #e8e8e8;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.loading-skeleton-description {
+  width: 80%;
+  height: 12px;
+  background-color: #e8e8e8;
+  border-radius: 4px;
+}

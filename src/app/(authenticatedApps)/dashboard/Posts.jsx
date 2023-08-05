@@ -1,24 +1,41 @@
 "use client";
 
-import { deletePost } from "@/actions/serverActions";
+import { deletePost, fetchPosts } from "@/actions/serverActions";
 import CardCommom from "@/components/Card";
 import { POST_FIELDS } from "@/helpers/constant";
 import { useRouter } from "next/navigation";
-import { experimental_useOptimistic, useState, useTransition } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  experimental_useOptimistic,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { toast } from "react-hot-toast";
 import AddEditPost from "../../../components/AddEditPost";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Posts = ({ data, createPost }) => {
   const [optimisticPosts, addOptimisticPosts] = experimental_useOptimistic(
     data,
-    (state, newData) => [{ ...newData }, ...state]
+    (state, newData) => [
+      !Array.isArray(newData) ? { ...newData } : [...newData],
+      ...state,
+    ]
   );
+
+  const [items, setItems] = useState([...data]);
   const [isLoading, startAddTransition] = useTransition();
   const [isLoadingDeletion, startDeleteTransition] = useTransition();
+  const [currentPage, setCurrentPage] = useState(11);
+  const [hasMore, setHasMore] = useState(true);
 
   const [addEditPostMetadata, setAddEditPostMetadata] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    setItems([...data]);
+  }, [data]);
 
   const onPostAddition = async (post) => {
     setAddEditPostMetadata(null);
@@ -38,8 +55,6 @@ const Posts = ({ data, createPost }) => {
         return toast.error(error);
       }
       toast.success("Successfully Added");
-
-      // router.refresh();
     });
   };
 
@@ -50,11 +65,36 @@ const Posts = ({ data, createPost }) => {
         return toast.error(error);
       }
 
-      toast.success("Successfully Deleted");
+      router.refresh();
 
-      // router.refresh();
+      toast.success("Successfully Deleted");
     });
   };
+
+  const fetchMoreData = async () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await fetchPosts(currentPage * 10);
+
+      if (error) {
+        return toast.error(error);
+      }
+
+      if (!data.length) {
+        setHasMore(false);
+        return;
+      }
+
+      if (data && data.length) {
+        setItems([...items, ...data]);
+      }
+    };
+
+    fetchData();
+  }, [currentPage]);
 
   return (
     <Container fluid>
@@ -93,25 +133,36 @@ const Posts = ({ data, createPost }) => {
           </Button>
         </Form>
       </AddEditPost>
-      <Row>
-        {optimisticPosts.length &&
-          optimisticPosts.map((item) => {
-            return (
-              <Col md={4} className="my-2" key={item.id}>
-                <CardCommom
-                  id={item.id}
-                  image={item.image}
-                  title={item.title}
-                  description={item.description}
-                  buttonText={"VIEW"}
-                  onClick={() => router.push(`/dashboard/${item.id}`)}
-                  onDelete={onPostDelete}
-                  isLoading={isLoadingDeletion}
-                />
-              </Col>
-            );
-          })}
-      </Row>
+      <InfiniteScroll
+        dataLength={items.length}
+        next={fetchMoreData}
+        hasMore={hasMore}
+        loader={
+          <div className="my-2 d-flex justify-content-center align-items-center">
+            <Spinner />
+          </div>
+        }
+      >
+        <Row>
+          {items.length &&
+            items.map((item) => {
+              return (
+                <Col md={4} className="my-2" key={item.id}>
+                  <CardCommom
+                    id={item.id}
+                    image={item.image}
+                    title={item.title}
+                    description={item.description}
+                    buttonText={"VIEW"}
+                    onClick={() => router.push(`/dashboard/${item.id}`)}
+                    onDelete={onPostDelete}
+                    isLoading={isLoadingDeletion}
+                  />
+                </Col>
+              );
+            })}
+        </Row>
+      </InfiniteScroll>
 
       <Button
         variant="danger"

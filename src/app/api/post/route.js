@@ -3,12 +3,30 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   try {
-    const amount = parseInt(request.nextUrl.searchParams?.get("amount")) || 10;
+    let amount = request.nextUrl.searchParams?.get("amount");
+
+    if (amount) {
+      amount = Number(amount);
+    }
+
+    let start = 0;
+    let end = 10;
+
+    if (amount && amount > 0) {
+      start = amount;
+      end = amount + 10;
+    }
 
     const allPosts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
-      take: amount,
+      skip: start,
+      take: amount ? 20 : 100,
     });
+
+    // Check if there's no data to send and return an empty array in that case
+    if (amount > 0 && allPosts.length === 0) {
+      return NextResponse.json({ data: [] }, { status: 200 });
+    }
 
     return NextResponse.json({ data: allPosts }, { status: 200 });
   } catch (error) {

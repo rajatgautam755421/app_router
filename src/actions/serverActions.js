@@ -4,6 +4,16 @@ import { makeApiRequest } from "@/helpers/apiHelper";
 import { POST_FIELDS } from "@/helpers/constant";
 import { revalidateTag } from "next/cache";
 
+export async function fetchPosts(amount) {
+  const { data, error } = await makeApiRequest({
+    endPoint: `api/post?amount=${amount}`,
+    method: "GET",
+    cache: "no-store",
+  });
+
+  return { data, error };
+}
+
 export async function createPost(post) {
   const postData = {};
 
@@ -33,9 +43,10 @@ export async function deletePost(id) {
       id,
     },
     method: "DELETE",
+    cache: "no-store",
   });
 
-  revalidateTag("post");
+  // revalidateTag("post");
 
   return { data, error };
 }

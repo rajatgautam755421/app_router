@@ -10,3 +10,5 @@ export const POST_FIELDS = [
 ];
 
 export const API_URL = "http://localhost:3000/";
+
+export let currentPageInfo = 0;
