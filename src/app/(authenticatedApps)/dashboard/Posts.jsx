@@ -2,21 +2,19 @@
 
 import { deletePost, fetchPosts } from "@/actions/serverActions";
 import CardCommom from "@/components/Card";
+import { PostContext } from "@/context/PostContext";
 import { POST_FIELDS } from "@/helpers/constant";
 import { useRouter } from "next/navigation";
-import {
-  experimental_useOptimistic,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { useContext, useEffect, useState, useTransition } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { toast } from "react-hot-toast";
-import AddEditPost from "../../../components/AddEditPost";
 import InfiniteScroll from "react-infinite-scroll-component";
+import AddEditPost from "../../../components/AddEditPost";
 
 const Posts = ({ data, createPost }) => {
-  const [items, setItems] = useState([...data]);
+  const { items, onPostAdd, onPostsAdd, onPostDelete } =
+    useContext(PostContext);
+
   const [isLoading, startAddTransition] = useTransition();
   const [isLoadingDeletion, startDeleteTransition] = useTransition();
   const [currentPage, setCurrentPage] = useState(11);
@@ -26,7 +24,7 @@ const Posts = ({ data, createPost }) => {
   const router = useRouter();
 
   useEffect(() => {
-    setItems([...data]);
+    onPostsAdd(data);
   }, [data]);
 
   const onPostAddition = async (post) => {
@@ -43,24 +41,21 @@ const Posts = ({ data, createPost }) => {
         return toast.error(error);
       }
 
-      setItems([data, ...items]);
+      onPostAdd(data);
       toast.success("Successfully Added");
     });
   };
 
-  const onPostDelete = async (id) => {
+  const onPostDeletion = async (id) => {
     startDeleteTransition(async () => {
       const { data, error } = await deletePost(id);
       if (error) {
         return toast.error(error);
       }
 
-      items.splice(
-        items.findIndex((item) => item?.id === data.id),
-        1
-      );
+      console.log(data, "dsfgjkhsjkdhjghj");
 
-      setItems([...items]);
+      onPostDelete(data.id);
 
       toast.success("Successfully Deleted");
     });
@@ -84,7 +79,7 @@ const Posts = ({ data, createPost }) => {
       }
 
       if (data && data.length) {
-        setItems([...items, ...data]);
+        onPostsAdd([...data]);
       }
     };
 
@@ -150,7 +145,7 @@ const Posts = ({ data, createPost }) => {
                     description={item.description}
                     buttonText={"VIEW"}
                     onClick={() => router.push(`/dashboard/${item.id}`)}
-                    onDelete={onPostDelete}
+                    onDelete={onPostDeletion}
                     isLoading={isLoadingDeletion}
                   />
                 </Col>

@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/context/AuthContext";
+import { PostProvider } from "@/context/PostContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
@@ -13,11 +14,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <AuthProvider>
-      {/* <Toaster></Toaster> */}
-
-      <html lang="en">
-        <body className={inter.className}>{children}</body>
-      </html>
+      <PostProvider>
+        <html lang="en">
+          <body className={inter.className}>{children}</body>
+        </html>
+      </PostProvider>
     </AuthProvider>
   );
 }
