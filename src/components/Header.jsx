@@ -30,8 +30,8 @@ const Header = () => {
       <Navbar.Collapse>
         <div className="d-flex justify-content-between align-items-between w-100">
           <div className="d-flex justify-content-between align-items-center">
-            <h6
-              onClick={() => router.push("/dashboard")}
+            <Link
+              href={"/dashboard"}
               className="mx-3"
               style={{
                 textDecoration: "none",
@@ -40,9 +40,9 @@ const Header = () => {
               }}
             >
               Home
-            </h6>
-            <h6
-              onClick={() => router.push("/about")}
+            </Link>
+            <Link
+              href={"/about"}
               className="mx-3"
               style={{
                 textDecoration: "none",
@@ -51,9 +51,9 @@ const Header = () => {
               }}
             >
               About
-            </h6>
-            <h6
-              onClick={() => router.push("/gallery")}
+            </Link>
+            <Link
+              href={"/gallery"}
               className="mx-3"
               style={{
                 textDecoration: "none",
@@ -62,7 +62,7 @@ const Header = () => {
               }}
             >
               Gallery
-            </h6>
+            </Link>
           </div>
 
           <div className="d-flex justify-content-between">

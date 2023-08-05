@@ -16,14 +16,6 @@ import AddEditPost from "../../../components/AddEditPost";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Posts = ({ data, createPost }) => {
-  const [optimisticPosts, addOptimisticPosts] = experimental_useOptimistic(
-    data,
-    (state, newData) => [
-      !Array.isArray(newData) ? { ...newData } : [...newData],
-      ...state,
-    ]
-  );
-
   const [items, setItems] = useState([...data]);
   const [isLoading, startAddTransition] = useTransition();
   const [isLoadingDeletion, startDeleteTransition] = useTransition();
@@ -44,16 +36,14 @@ const Posts = ({ data, createPost }) => {
     POST_FIELDS.forEach(({ key }) => {
       postData[key] = post?.get(key)?.valueOf();
     });
-    addOptimisticPosts({
-      ...postData,
-      image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-    });
 
     startAddTransition(async () => {
       const { data, error } = await createPost(post);
       if (error) {
         return toast.error(error);
       }
+
+      setItems([data, ...items]);
       toast.success("Successfully Added");
     });
   };
@@ -65,7 +55,12 @@ const Posts = ({ data, createPost }) => {
         return toast.error(error);
       }
 
-      router.refresh();
+      items.splice(
+        items.findIndex((item) => item?.id === data.id),
+        1
+      );
+
+      setItems([...items]);
 
       toast.success("Successfully Deleted");
     });
