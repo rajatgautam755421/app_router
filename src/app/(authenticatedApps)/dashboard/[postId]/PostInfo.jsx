@@ -11,7 +11,6 @@ import { toast } from "react-hot-toast";
 const PostInfo = ({ data, updatePost }) => {
   const [itemMetaData, setItemMetaData] = useState(null);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   const onUpdate = async (e) => {
     setItemMetaData(null);
@@ -19,11 +18,10 @@ const PostInfo = ({ data, updatePost }) => {
     startTransition(async () => {
       const response = await updatePost(e, data?.id);
 
-      if (response.error) {
+      if (response?.error) {
         return toast.error(error);
       }
       toast.success("Successfully Updated");
-      router.refresh();
     });
   };
 

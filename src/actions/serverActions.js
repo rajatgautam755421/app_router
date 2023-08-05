@@ -18,10 +18,10 @@ export async function createPost(post) {
       image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
     },
     method: "POST",
-    cache: "force-cache",
+    cache: "no-store",
   });
 
-  // revalidateTag("post");
+  revalidateTag("post");
 
   return { data, error };
 }
@@ -35,7 +35,7 @@ export async function deletePost(id) {
     method: "DELETE",
   });
 
-  // revalidateTag("post");
+  revalidateTag("post");
 
   return { data, error };
 }
@@ -54,10 +54,10 @@ export async function updatePost(post, id) {
       id,
     },
     method: "PUT",
-    cache: "force-cache",
+    cache: "no-store",
   });
 
-  // revalidateTag("post");
+  revalidateTag("post");
 
   return { data, error };
 }

@@ -30,16 +30,16 @@ const Page = async ({ params }) => {
   );
 };
 
-export async function generateStaticParams() {
-  const { data, error } = await makeApiRequest({
-    endPoint: "api/post",
-    method: "GET",
-    cache: "force-cache",
-  });
+// export async function generateStaticParams() {
+//   const { data, error } = await makeApiRequest({
+//     endPoint: "api/post",
+//     method: "GET",
+//     cache: "no-store",
+//   });
 
-  if (error) throw new Error(error);
+//   if (error) throw new Error(error);
 
-  return data.map((d) => ({ postId: d?.id }));
-}
+//   return data.map((d) => ({ postId: d?.id }));
+// }
 
 export default Page;

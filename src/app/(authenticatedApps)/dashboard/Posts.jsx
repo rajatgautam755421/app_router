@@ -35,8 +35,6 @@ const Posts = ({ data, createPost }) => {
         return toast.error(error);
       }
       toast.success("Successfully Added");
-
-      router.refresh();
     });
   };
 
@@ -48,8 +46,6 @@ const Posts = ({ data, createPost }) => {
       }
 
       toast.success("Successfully Deleted");
-
-      router.refresh();
     });
   };
 
