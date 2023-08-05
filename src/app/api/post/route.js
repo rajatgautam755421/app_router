@@ -1,10 +1,13 @@
 import { prisma } from "@/db";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const amount = parseInt(request.nextUrl.searchParams?.get("amount")) || 10;
+
     const allPosts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
+      take: amount,
     });
 
     return NextResponse.json({ data: allPosts }, { status: 200 });

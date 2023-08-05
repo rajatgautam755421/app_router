@@ -21,7 +21,7 @@ export async function createPost(post) {
     cache: "force-cache",
   });
 
-  // revalidateTag("post");
+  revalidateTag("post");
 
   return { data, error };
 }
@@ -35,7 +35,7 @@ export async function deletePost(id) {
     method: "DELETE",
   });
 
-  // revalidateTag("post");
+  revalidateTag("post");
 
   return { data, error };
 }
@@ -57,7 +57,7 @@ export async function updatePost(post, id) {
     cache: "force-cache",
   });
 
-  // revalidateTag("post");
+  revalidateTag("post");
 
   return { data, error };
 }

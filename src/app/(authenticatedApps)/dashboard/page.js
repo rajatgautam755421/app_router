@@ -5,7 +5,7 @@ import Posts from "./Posts";
 
 async function fetchPosts(searchQuery) {
   const { data, error } = await makeApiRequest({
-    endPoint: "api/post",
+    endPoint: "api/post?amount=20",
     cache: "no-store",
     method: searchQuery ? "POST" : "GET",
     next: {
@@ -27,6 +27,7 @@ export default async function Home({ searchParams }) {
   if (error) {
     throw new Error(error);
   }
+
   return (
     <>
       {data?.length !== 0 ? (

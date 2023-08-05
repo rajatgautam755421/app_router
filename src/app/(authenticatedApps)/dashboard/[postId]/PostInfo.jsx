@@ -19,11 +19,11 @@ const PostInfo = ({ data, updatePost }) => {
     startTransition(async () => {
       const response = await updatePost(e, data?.id);
 
-      if (response.error) {
+      if (response?.error) {
         return toast.error(error);
       }
       toast.success("Successfully Updated");
-      router.refresh();
+      // router.refresh();
     });
   };
 

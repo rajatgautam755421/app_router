@@ -27,7 +27,10 @@ const Posts = ({ data, createPost }) => {
     POST_FIELDS.forEach(({ key }) => {
       postData[key] = post?.get(key)?.valueOf();
     });
-    addOptimisticPosts(postData);
+    addOptimisticPosts({
+      ...postData,
+      image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    });
 
     startAddTransition(async () => {
       const { data, error } = await createPost(post);
@@ -36,7 +39,7 @@ const Posts = ({ data, createPost }) => {
       }
       toast.success("Successfully Added");
 
-      router.refresh();
+      // router.refresh();
     });
   };
 
@@ -49,7 +52,7 @@ const Posts = ({ data, createPost }) => {
 
       toast.success("Successfully Deleted");
 
-      router.refresh();
+      // router.refresh();
     });
   };
 
